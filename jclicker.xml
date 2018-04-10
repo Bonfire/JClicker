@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jclicker" default="all">
+  
+  
+  <property file="jclicker.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/charsets.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/cldrdata.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/dnsns.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/icedtea-sound.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/jaccess.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/localedata.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/nashorn.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/sunec.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/sunjce_provider.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/sunpkcs11.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/zipfs.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/jce.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/jsse.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/management-agent.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/resources.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <fileset dir="${javac2.home}">
+      <include name="javac2.jar"/>
+      <include name="jdom.jar"/>
+      <include name="asm-all*.jar"/>
+      <include name="jgoodies-forms.jar"/>
+    </fileset>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module JClicker -->
+  
+  <dirname property="module.jclicker.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.jclicker" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.jclicker" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.jclicker" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.jclicker" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="jclicker.output.dir" value="${module.jclicker.basedir}/out/production/JClicker"/>
+  <property name="jclicker.testoutput.dir" value="${module.jclicker.basedir}/out/test/JClicker"/>
+  
+  <path id="jclicker.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="jclicker.module.production.classpath">
+    <path refid="${module.jdk.classpath.jclicker}"/>
+  </path>
+  
+  <path id="jclicker.runtime.production.module.classpath">
+    <pathelement location="${jclicker.output.dir}"/>
+  </path>
+  
+  <path id="jclicker.module.classpath">
+    <path refid="${module.jdk.classpath.jclicker}"/>
+    <pathelement location="${jclicker.output.dir}"/>
+  </path>
+  
+  <path id="jclicker.runtime.module.classpath">
+    <pathelement location="${jclicker.testoutput.dir}"/>
+    <pathelement location="${jclicker.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.jclicker">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.jclicker">
+    <patternset refid="excluded.from.module.jclicker"/>
+  </patternset>
+  
+  <path id="jclicker.module.sourcepath">
+    <dirset dir="${module.jclicker.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.jclicker" depends="compile.module.jclicker.production,compile.module.jclicker.tests" description="Compile module JClicker"/>
+  
+  <target name="compile.module.jclicker.production" depends="register.custom.compilers" description="Compile module JClicker; production classes">
+    <mkdir dir="${jclicker.output.dir}"/>
+    <javac2 destdir="${jclicker.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.jclicker}/javac">
+      <compilerarg line="${compiler.args.jclicker}"/>
+      <bootclasspath refid="jclicker.module.bootclasspath"/>
+      <classpath refid="jclicker.module.production.classpath"/>
+      <src refid="jclicker.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.jclicker"/>
+    </javac2>
+    
+    <copy todir="${jclicker.output.dir}">
+      <fileset dir="${module.jclicker.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.jclicker.tests" depends="register.custom.compilers,compile.module.jclicker.production" description="compile module JClicker; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.jclicker" description="cleanup module">
+    <delete dir="${jclicker.output.dir}"/>
+    <delete dir="${jclicker.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.jclicker" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.jclicker" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.jclicker:jar" value="${basedir}/out/artifacts/JClicker_jar"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.JClicker.jar" value="${artifacts.temp.dir}/JClicker.jar"/>
+  </target>
+  
+  <target name="artifact.jclicker:jar" depends="init.artifacts, compile.module.jclicker" description="Build &#39;JClicker:jar&#39; artifact">
+    <property name="artifact.temp.output.jclicker:jar" value="${artifacts.temp.dir}/JClicker_jar"/>
+    <mkdir dir="${artifact.temp.output.jclicker:jar}"/>
+    <jar destfile="${temp.jar.path.JClicker.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${jclicker.output.dir}"/>
+    </jar>
+    <copy file="${temp.jar.path.JClicker.jar}" tofile="${artifact.temp.output.jclicker:jar}/JClicker.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.jclicker:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.jclicker:jar}"/>
+    <copy todir="${artifact.output.jclicker:jar}">
+      <fileset dir="${artifact.temp.output.jclicker:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>

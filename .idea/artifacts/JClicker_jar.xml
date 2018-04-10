@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JClicker:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JClicker_jar</output-path>
+    <root id="archive" name="JClicker.jar">
+      <element id="module-output" name="JClicker" />
+    </root>
+  </artifact>
+</component>
