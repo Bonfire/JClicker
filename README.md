@@ -22,3 +22,6 @@ JClicker is an extremely lightweight autoclicker made in Java with an emphasis o
 ## Planned Features
   - Implement a global hotkey (window doesn't have to be focused)
   - Detect and allow the setting of different mouse buttons (mouse-4, mouse-5, etc.)
+
+## Issues
+  - Please report any issues through the repository's issue tracker
