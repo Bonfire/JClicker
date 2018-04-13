@@ -5,7 +5,7 @@ import java.awt.event.InputEvent;
 
 public class Clicker{
     private long sleepDuration = 0;
-    private int clickType = InputEvent.BUTTON1_DOWN_MASK;
+    private int mouseButton = InputEvent.BUTTON1_DOWN_MASK;
     private boolean doubleClick = false;
     private boolean repeatUntil = false;
     private int repeatCount = 0;
@@ -34,45 +34,54 @@ public class Clicker{
                     System.out.println("Clicking " + repeatCount + " times");
                     for (int i = 0; i < repeatCount; i++) {
                         // If we've pressed stop, go ahead and cancel the work
-                        if(!isRunLoop()){
+                        if(!runLoop){
                             worker.cancel(true);
+                            break;
                         }
 
                         // Simulate a click
-                        clickBot.mousePress(clickType);
-                        clickBot.mouseRelease(clickType);
+                        clickBot.mousePress(mouseButton);
+                        clickBot.mouseRelease(mouseButton);
 
                         // If we're double clicking, "click" again!
                         if (doubleClick) {
-                            clickBot.mousePress(clickType);
-                            clickBot.mouseRelease(clickType);
+                            clickBot.mousePress(mouseButton);
+                            clickBot.mouseRelease(mouseButton);
                         }
 
                         try {
-                            System.out.println("Sleeping for " + sleepDuration + " millis");
+                            System.out.println("Clicked, now sleeping for " + sleepDuration + " millis");
                             Thread.sleep(sleepDuration);
                         } catch (InterruptedException e) {
+                            worker.cancel(true);
+                            Thread.currentThread().interrupt();
                         }
                     }
+
+                    runLoop = false;
+
                 } else {
                     Thread.sleep(1000);
                     // While we haven't pressed the stop button
-                    while (isRunLoop()) {
+                    while (runLoop) {
                         System.out.println("Clicking!");
-                        clickBot.mousePress(clickType);
-                        clickBot.mouseRelease(clickType);
+                        clickBot.mousePress(mouseButton);
+                        clickBot.mouseRelease(mouseButton);
 
                         // If we're double clicking, "click" again!
                         if (doubleClick) {
-                            clickBot.mousePress(clickType);
-                            clickBot.mouseRelease(clickType);
+                            clickBot.mousePress(mouseButton);
+                            clickBot.mouseRelease(mouseButton);
                         }
 
                         try {
                             Thread.sleep(sleepDuration);
                         } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
                         }
                     }
+
+                    runLoop = false;
                 }
                 return null;
             }
@@ -85,8 +94,8 @@ public class Clicker{
         this.sleepDuration = sleepDuration;
     }
 
-    public void setClickType(int clickType) {
-        this.clickType = clickType;
+    public void setMouseButton(int mouseButton) {
+        this.mouseButton = mouseButton;
     }
 
     public void isDoubleClick(boolean doubleClick) {
@@ -105,7 +114,7 @@ public class Clicker{
         this.runLoop = runLoop;
     }
 
-    public boolean isRunLoop() {
+    public boolean getRunLoop() {
         return runLoop;
     }
 }

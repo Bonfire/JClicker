@@ -125,17 +125,26 @@ public class GUI {
 
         autoClicker.isRepeatUntil(repeatUntil);
 
+
         // Create a variable to determine what kind of button we're clicking
-        int clickType = InputEvent.BUTTON1_DOWN_MASK;
+        // Grab the mask for the mouse button plus one (no mask for button 0)
+/*
+        int mouseButton = InputEvent.getMaskForButton(buttonTypeCombo.getSelectedIndex() + 1);
+        System.out.println("Selected Index: " + buttonTypeCombo.getSelectedIndex());
+        System.out.println("Mouse Mask: " + mouseButton);
+*/
+
+        // Create a variable to determine what kind of button we're clicking
+        int mouseButton = InputEvent.BUTTON1_DOWN_MASK;
 
         switch(buttonTypeCombo.getSelectedItem().toString()){
-            case "Left" : clickType = InputEvent.BUTTON1_DOWN_MASK; break;
-            case "Middle" : clickType = InputEvent.BUTTON2_DOWN_MASK; break;
-            case "Right" : clickType = InputEvent.BUTTON3_DOWN_MASK; break;
+            case "Left" : mouseButton = InputEvent.BUTTON1_DOWN_MASK; break;
+            case "Middle" : mouseButton = InputEvent.BUTTON2_DOWN_MASK; break;
+            case "Right" : mouseButton = InputEvent.BUTTON3_DOWN_MASK; break;
         }
 
         // Set the clicker's click type
-        autoClicker.setClickType(clickType);
+        autoClicker.setMouseButton(mouseButton);
 
         // Create a variable to determine the click type
         boolean doubleClick = false;
@@ -153,6 +162,36 @@ public class GUI {
         startButton.setText("Start (" + hotkeyText + ")");
         stopButton.setText("Stop (" + hotkeyText + ")");
         hotkeyField.setText(hotkeyText);
+
+
+ /*       // See how many mouse buttons the user's mouse has
+        int numMouseButtons = MouseInfo.getNumberOfButtons();
+
+        // If they have a mouse...
+        if(numMouseButtons > 0) {
+            // Add each mouse button to the dropdown
+            for (int i = 1; i < numMouseButtons; i++) {
+                // If we're dealing with mouse buttons 1-3, give them actual labels
+                if(i <= 3){
+                    String mouseButtonName = "";
+                    switch(i){
+                        case 1:
+                            mouseButtonName = "Left";
+                            break;
+                        case 2:
+                            mouseButtonName = "Middle";
+                            break;
+                        case 3:
+                            mouseButtonName = "Right";
+                            break;
+                    }
+                    buttonTypeCombo.addItem(mouseButtonName);
+                // Else, just call them "mouse i"
+                }else{
+                    buttonTypeCombo.addItem("Mouse " + i);
+                }
+            }
+        }*/
 
         // If the "Set Hotkey" button is pressed, begin the setting
         setHotkeyButton.addMouseListener(new MouseAdapter() {
@@ -188,7 +227,7 @@ public class GUI {
                 super.mouseClicked(mouseEvent);
 
                 // If there were no errors in setup, this will be true and start simulating clicks
-                if(setupClicker()){
+                if(setupClicker() && !(autoClicker.getRunLoop())){
                     autoClicker.simulateClicks();
                 }
             }
@@ -198,7 +237,10 @@ public class GUI {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 super.mouseClicked(mouseEvent);
-                autoClicker.setRunLoop(false);
+                if(autoClicker.getRunLoop()) {
+                    autoClicker.setRunLoop(false);
+                    System.out.println("Stopping Clicker");
+                }
             }
         });
     }
