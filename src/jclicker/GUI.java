@@ -1,6 +1,7 @@
 package jclicker;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.text.ParseException;
 import java.util.concurrent.TimeUnit;
@@ -49,10 +50,12 @@ public class GUI {
         frame.setContentPane(new GUI().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setResizable(false);
+        frame.setMaximumSize(new Dimension(400,600));
         frame.setVisible(true);
     }
 
-    public void setupClicker(){
+    public boolean setupClicker(){
         // Commit edits to the spinners to make sure their values are updated
         try{
             hoursSpinner.commitEdit();
@@ -64,7 +67,7 @@ public class GUI {
                     "Error properly updating time values",
                     "Warning",
                     JOptionPane.WARNING_MESSAGE);
-            return;
+            return false;
         }
 
         // Grab the values from each of the spinners
@@ -80,7 +83,17 @@ public class GUI {
                     "Time values cannot all be zero",
                     "Warning",
                     JOptionPane.WARNING_MESSAGE);
-            return;
+            return false;
+        }
+
+        // TIMER SPINNER CHECK (NEGATIVE)
+        // If there are any negative values, notify the user
+        if((hourVal < 0) || (minuteVal < 0) || (secondVal < 0) || (milliVal < 0)){
+            JOptionPane.showMessageDialog(mainPanel,
+                    "Time values cannot all be zero",
+                    "Warning",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
         }
 
         // Create a value to determine the milliseconds we must sleep for
@@ -94,12 +107,12 @@ public class GUI {
 
         //REPETITION OPTIONS CHECK
         // If the "repeat until..." radio button is checked, let's make sure the spinner has a valid value
-        if(repeatRadio.isSelected() && ((Integer) repeatCountSpinner.getValue() == 0)){
+        if(repeatRadio.isSelected() && ((Integer) repeatCountSpinner.getValue() <= 0)){
             JOptionPane.showMessageDialog(mainPanel,
                     "Repetition counter must be greater than 0",
                     "Warning",
                     JOptionPane.WARNING_MESSAGE);
-            return;
+            return false;
         }
 
         boolean repeatUntil = false;
@@ -131,6 +144,8 @@ public class GUI {
             doubleClick = true;
 
         autoClicker.isDoubleClick(doubleClick);
+
+        return true;
     }
 
     public GUI() {
@@ -171,8 +186,11 @@ public class GUI {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
                 super.mouseClicked(mouseEvent);
-                setupClicker();
-                autoClicker.simulateClicks();
+
+                // If there were no errors in setup, this will be true and start simulating clicks
+                if(setupClicker()){
+                    autoClicker.simulateClicks();
+                }
             }
         });
 
