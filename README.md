@@ -12,6 +12,7 @@ JClicker is an extremely lightweight autoclicker made in Java with an emphasis o
   - Stop the clicker only when stopped
   - Change hotkey to start and stop the clicker
   - Validation checks on inputted values
+  - Global hotkey to start/stop the clicker (some keys are not supported)
 
 ## Screenshot
 ![](https://i.imgur.com/p0Y5V6T.png)
@@ -20,7 +21,6 @@ JClicker is an extremely lightweight autoclicker made in Java with an emphasis o
 [![GitHub (pre-)release](https://img.shields.io/github/release/Bonfire/JClicker/all.svg)](https://github.com/Bonfire/JClicker/releases)
 
 ## Planned Features
-  - Implement a global hotkey (window doesn't have to be focused)
   - Detect and allow the setting of different mouse buttons (mouse-4, mouse-5, etc.)
 
 ## Issues

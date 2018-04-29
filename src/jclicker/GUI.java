@@ -1,10 +1,19 @@
 package jclicker;
 
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GUI {
     private JComboBox buttonTypeCombo;
@@ -30,8 +39,44 @@ public class GUI {
 
     private Clicker autoClicker = new Clicker();
 
-    public int hotkeyCode = 118;
-    public String hotkeyText = KeyEvent.getKeyText(hotkeyCode);
+    // Set up our hotkey defaults, default key is F7
+    public int hotkeyCode = NativeKeyEvent.VC_F7;
+    public String hotkeyText = NativeKeyEvent.getKeyText(hotkeyCode);
+    public boolean waitingForHotkey = false;
+
+    // Create a new global hotkey listener
+    public class GlobalKeyListener implements NativeKeyListener{
+        public void nativeKeyPressed(NativeKeyEvent keyPress) {
+            // If the hotkey is pressed and the clicker isn't running, start it. If it is running, stop it.
+            if (keyPress.getKeyCode() == hotkeyCode) {
+                if(setupClicker()) {
+                    if (!autoClicker.getRunLoop()) {
+                        autoClicker.simulateClicks();
+                    } else {
+                        autoClicker.setRunLoop(false);
+                    }
+                }
+            }
+
+            // If we're waiting for a hotkey to be pressed, make sure we can set it all up
+            if(waitingForHotkey){
+                hotkeyCode = keyPress.getKeyCode();
+                hotkeyField.setText(NativeKeyEvent.getKeyText(hotkeyCode));
+
+                // Update the buttons when a new hotkey is picked
+                startButton.setText("Start (" + NativeKeyEvent.getKeyText(hotkeyCode) + ")");
+                stopButton.setText("Stop (" + NativeKeyEvent.getKeyText(hotkeyCode) + ")");
+
+                waitingForHotkey = false;
+            }
+        }
+
+        public void nativeKeyReleased(NativeKeyEvent e) {
+        }
+
+        public void nativeKeyTyped(NativeKeyEvent e) {
+        }
+    }
 
     public static void main(String[] args) {
         try {
@@ -163,6 +208,27 @@ public class GUI {
         stopButton.setText("Stop (" + hotkeyText + ")");
         hotkeyField.setText(hotkeyText);
 
+        // Create our global hotkey
+        try{
+            GlobalScreen.registerNativeHook();
+        }catch(NativeHookException e){
+            JOptionPane.showMessageDialog(mainPanel,
+                    "Error when setting hotkey",
+                    "Warning",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+
+        // Change our global hotkey's default logging settings
+        // Get the logger for "org.jnativehook" and set the level to warning.
+        Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+        logger.setLevel(Level.WARNING);
+
+        // Don't forget to disable the parent handlers.
+        logger.setUseParentHandlers(false);
+
+        // Add the hotkey to the global screen
+        GlobalScreen.addNativeKeyListener(new GlobalKeyListener());
+
 
  /*       // See how many mouse buttons the user's mouse has
         int numMouseButtons = MouseInfo.getNumberOfButtons();
@@ -202,22 +268,8 @@ public class GUI {
                 // Let the user know that we're waiting on user input
                 hotkeyField.setText("Press Any Key");
 
-                // Wait for a keypress
-                setHotkeyButton.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyPressed(KeyEvent keyEvent) {
-                        super.keyPressed(keyEvent);
-
-                        // Get the keypress code and set that as the keyCode
-                        hotkeyCode = keyEvent.getKeyCode();
-                        hotkeyField.setText(KeyEvent.getKeyText(hotkeyCode));
-
-                        // Update the buttons when a new hotkey is picked
-                        startButton.setText("Start (" + KeyEvent.getKeyText(hotkeyCode) + ")");
-                        stopButton.setText("Stop (" + KeyEvent.getKeyText(hotkeyCode) + ")");
-                    }
-                });
-
+                // We are now waiting for a hotkey
+                waitingForHotkey = true;
             }
         });
 
