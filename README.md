@@ -20,6 +20,9 @@ JClicker is an extremely lightweight autoclicker made in Java with an emphasis o
 ## Latest Release
 [![GitHub (pre-)release](https://img.shields.io/github/release/Bonfire/JClicker/all.svg)](https://github.com/Bonfire/JClicker/releases)
 
+## Third-Party Libraries
+[JNativeHook - Global keyboard and mouse listeners for Java. ](https://github.com/kwhat/jnativehook)
+
 ## Planned Features
   - Detect and allow the setting of different mouse buttons (mouse-4, mouse-5, etc.)
 
