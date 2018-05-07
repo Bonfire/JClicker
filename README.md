@@ -17,7 +17,7 @@ JClicker is an extremely lightweight autoclicker made in Java with an emphasis o
 ## Screenshot
 ![](https://i.imgur.com/p0Y5V6T.png)
 
-## Latest Release
+## Latest Release / Download
 [![GitHub (pre-)release](https://img.shields.io/github/release/Bonfire/JClicker/all.svg)](https://github.com/Bonfire/JClicker/releases)
 
 ## Third-Party Libraries
